@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/limb4.png-4d8f90900b8c99afddbaf6649d2a4475.stex"
+path="res://.import/damage4.png-305ee08939c3a23737e50da0eef1e798.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://limb4.png"
-dest_files=[ "res://.import/limb4.png-4d8f90900b8c99afddbaf6649d2a4475.stex" ]
+source_file="res://damage4.png"
+dest_files=[ "res://.import/damage4.png-305ee08939c3a23737e50da0eef1e798.stex" ]
 
 [params]
 
