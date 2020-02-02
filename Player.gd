@@ -1,53 +1,52 @@
 extends KinematicBody2D
 
-var run_speed = 350
-var jump_speed = -1000
-var gravity = 2500
+var up = Vector2(0,-1)
+var acceleration = 50
+var jump_high = -550
+var max_speed = 250
+var gravity = 10
+
 var HP = 5
-var velocity = Vector2()
+var motion = Vector2()
 
-var damage1 = preload("res://damage1.png")
-var damage2 = preload("res://damage2.png")	
-var damage3 = preload("res://damage3.png")	
-var damage4 = preload("res://damage4.png")	
-var images = Array([damage1, damage2, damage3, damage4])
-onready var icon_sprite = get_node("../Player/icon")
+func hit():
+	HP -=1
+	print(HP)
 
-func get_input():
-	velocity.x = 0
-	var right = Input.is_action_pressed('right')
-	var left = Input.is_action_pressed('left')
-	var jump = Input.is_action_just_pressed('up')
-
-	if is_on_floor() and jump:
-		velocity.y = jump_speed
-	if right:
-		velocity.x += run_speed
-	if left:
-		velocity.x -= run_speed
-		
-func hpCounter(Obj, Hp):
-	if Hp == 0:
-		print("Game Over")
-	elif Obj.collider.name == "Enemy":
-		HP -= 1
-		print(HP)
-		return HP
-
-func _physics_process(delta):
-	velocity.y += gravity * delta
-	get_input()
-	velocity = move_and_slide(velocity, Vector2(0, -1))
-	var collision = move_and_collide(velocity * delta)
-	if collision:
-		hpCounter(collision, HP)
-		match HP:
+func _process(delta):
+	match HP:
 			1:
-				icon_sprite.set_texture(damage4)
+				$Robie/AnimationPlayer.play("solo torso")
 			2:
-				icon_sprite.set_texture(damage3)
+				$Robie/AnimationPlayer.play("un braz")
 			3:
-				icon_sprite.set_texture(damage2)
+				$Robie/AnimationPlayer.play("dos miembros")
+				$parado.disabled = true
+				$tirado.disabled = false
 			4:
-				icon_sprite.set_texture(damage1)
-		
+				$Robie/AnimationPlayer.play("una pierna")
+				$parado.disabled = false
+				$tirado.disabled = true
+	
+func _physics_process(delta):
+	motion.y += gravity
+	var friction = false
+	
+	if Input.is_action_pressed("ui_right"):
+		motion.x = min(motion.x+acceleration, max_speed)
+		$Robie.scale.x = 0.25
+	elif Input.is_action_pressed("ui_left"):
+		motion.x = max(motion.x - acceleration, -max_speed)
+		$Robie.scale.x = -0.25
+	else:
+		friction = true
+	
+	if is_on_floor():
+		if Input.is_action_pressed("ui_up"):
+			motion.y = jump_high
+		if friction == true:
+			motion.x = lerp(motion.x, 0,0.2)
+	else:
+		if friction == true:
+			motion.x = lerp(motion.x, 0,0.2)
+	motion = move_and_slide(motion, up)
